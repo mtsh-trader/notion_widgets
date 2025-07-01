@@ -148,7 +148,7 @@
 
     function createAnimatedBackground() {
         const bg = document.getElementById("animated-bg");
-        const chars = "EUR/USD USD/JPY GBP/USD USD/CHF AUD/USD USD/CAD NZD/USD 1234567890 ABCDEFGHJKLMNOPQRSTUVWXYZ";
+        const chars = "$ € £ ¥ ₹ CHF ₽ 1234567890 ABCDEFGHJKLMNOPQRSTUVWXYZ";
         for (let i = 0; i < 100; i++) {
             const span = document.createElement("span");
             span.textContent = chars[Math.floor(Math.random() * chars.length)];
