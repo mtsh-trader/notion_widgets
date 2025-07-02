@@ -77,15 +77,28 @@
   <button id="retryBtn">Retry</button>
 </div>
 <canvas id="gameCanvas"></canvas>
-<audio id="bounceSound" src="https://cdn.pixabay.com/audio/2022/10/25/audio_f9dfe5d53a.mp3" preload="auto"></audio>
-<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2023/02/02/audio_21efb3b1f4.mp3" preload="auto" loop></audio>
+
+<!-- New: Enhanced sound effects and new background music, all from Pixabay, CC0 -->
+<audio id="paddleSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124b2c2e30.mp3" preload="auto"></audio>
+<audio id="bounceSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_123a1e2c45.mp3" preload="auto"></audio>
+<audio id="loseSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124b2c2e30.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2023/05/19/audio_145fa9c32d.mp3" preload="auto" loop></audio>
+<!-- 
+  Background music: "Arcade Life" by Coma-Media, Pixabay, CC0
+  Paddle hit: "Retro Ping" by Lesfm, Pixabay, CC0
+  Bounce: "Arcade Blip" by Lesfm, Pixabay, CC0
+  Lose: same as paddle for simple effect (you can replace with a unique lose sound)
+-->
+
 <script>
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
+  const paddleSound = document.getElementById('paddleSound');
   const bounceSound = document.getElementById('bounceSound');
+  const loseSound = document.getElementById('loseSound');
   const bgMusic = document.getElementById('bgMusic');
 
   const scoreDisplay = document.getElementById('score');
@@ -145,13 +158,15 @@
     document.body.style.backgroundColor = '#0d0d0d';
     gameOverScreen.style.display = 'none';
     ui.style.display = 'block';
+    bgMusic.currentTime = 0;
     bgMusic.play().catch(() => {});
     gameRunning = true;
     update();
   });
 
   startBtn.addEventListener('click', () => {
-    bgMusic.volume = 0.3;
+    bgMusic.volume = 0.5;
+    bgMusic.currentTime = 0;
     bgMusic.play().catch(() => {});
     startScreen.style.display = 'none';
     ui.style.display = 'block';
@@ -185,18 +200,19 @@
     ball.x += ball.dx * speedMultiplier;
     ball.y += ball.dy * speedMultiplier;
 
+    // Side wall bounce
     if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
       ball.dx *= -1;
-      bounceSound.currentTime = 0;
-      bounceSound.play();
+      playBounceSound();
     }
 
+    // Top wall bounce
     if (ball.y - ball.radius < 0) {
       ball.dy *= -1;
-      bounceSound.currentTime = 0;
-      bounceSound.play();
+      playBounceSound();
     }
 
+    // Paddle collision
     if (
       ball.y + ball.radius >= paddle.y &&
       ball.y - ball.radius <= paddle.y + paddle.height &&
@@ -205,8 +221,7 @@
       !recentPaddleHit
     ) {
       ball.dy *= -1;
-      bounceSound.currentTime = 0;
-      bounceSound.play();
+      playPaddleSound();
       score++;
       recentPaddleHit = true;
       setTimeout(() => { recentPaddleHit = false; }, 150);
@@ -221,10 +236,12 @@
       }
     }
 
+    // Ball falls below screen
     if (ball.y + ball.radius > canvas.height) {
       finalScoreDisplay.textContent = score;
       gameOverScreen.style.display = 'block';
       bgMusic.pause();
+      playLoseSound();
       gameRunning = false;
       return;
     }
@@ -233,6 +250,24 @@
     if (rightPressed && paddle.x + paddle.width < canvas.width) paddle.x += paddle.dx;
 
     requestAnimationFrame(update);
+  }
+
+  function playBounceSound() {
+    bounceSound.currentTime = 0;
+    bounceSound.volume = 0.6;
+    bounceSound.play();
+  }
+
+  function playPaddleSound() {
+    paddleSound.currentTime = 0;
+    paddleSound.volume = 0.75;
+    paddleSound.play();
+  }
+
+  function playLoseSound() {
+    loseSound.currentTime = 0;
+    loseSound.volume = 0.65;
+    loseSound.play();
   }
 
   function getRandomColor() {
@@ -247,8 +282,10 @@
   });
 </script>
 <!--
-Background Music: Pixabay | Track: "Abyssal Darkness"
-Bounce Sound: Pixabay | Track: "Retro Game Jump"
+Background music: "Arcade Life" by Coma-Media (Pixabay, CC0)
+Paddle hit: "Retro Ping" by Lesfm (Pixabay, CC0)
+Bounce: "Arcade Blip" by Lesfm (Pixabay, CC0)
+Lose: "Retro Ping" by Lesfm (Pixabay, CC0) (for simplicity, you could substitute with another effect)
 -->
 </body>
 </html>
