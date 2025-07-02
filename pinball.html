@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Pinball </title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #0d0d0d;
+      font-family: Arial, sans-serif;
+      color: #00ffcc;
+    }
+    canvas {
+      display: block;
+      background: radial-gradient(circle at center, #111, #000);
+    }
+    #ui {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 24px;
+      z-index: 10;
+    }
+    #gameOver {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      color: #00ffcc;
+      text-align: center;
+    }
+    #retryBtn, #startBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    #startScreen {
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:#000;
+      color:#00ffcc;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div id="startScreen">
+  <h1>Dark Pinball</h1>
+  <button id="startBtn">Start Game</button>
+</div>
+<div id="ui" style="display:none;">Score: <span id="score">0</span></div>
+<div id="gameOver">
+  <h2>Game Over</h2>
+  <p>Your Score: <span id="finalScore"></span></p>
+  <button id="retryBtn">Retry</button>
+</div>
+<canvas id="gameCanvas"></canvas>
+<audio id="bounceSound" src="https://cdn.pixabay.com/audio/2022/10/25/audio_f9dfe5d53a.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="https://cdn.pixabay.com/audio/2023/02/02/audio_21efb3b1f4.mp3" preload="auto" loop></audio>
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const bounceSound = document.getElementById('bounceSound');
+  const bgMusic = document.getElementById('bgMusic');
+
+  const scoreDisplay = document.getElementById('score');
+  const gameOverScreen = document.getElementById('gameOver');
+  const finalScoreDisplay = document.getElementById('finalScore');
+  const retryBtn = document.getElementById('retryBtn');
+  const startScreen = document.getElementById('startScreen');
+  const startBtn = document.getElementById('startBtn');
+  const ui = document.getElementById('ui');
+
+  let score = 0;
+  let speedMultiplier = 1;
+  let gameRunning = false;
+  let recentPaddleHit = false;
+
+  const ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 15,
+    dx: 3,
+    dy: -3,
+    color: '#00ffcc'
+  };
+
+  const paddle = {
+    width: 100,
+    height: 20,
+    x: canvas.width / 2 - 50,
+    y: canvas.height - 40,
+    dx: 6,
+    color: '#ffffff'
+  };
+
+  let leftPressed = false;
+  let rightPressed = false;
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') leftPressed = true;
+    if (e.key === 'ArrowRight') rightPressed = true;
+  });
+
+  document.addEventListener('keyup', e => {
+    if (e.key === 'ArrowLeft') leftPressed = false;
+    if (e.key === 'ArrowRight') rightPressed = false;
+  });
+
+  retryBtn.addEventListener('click', () => {
+    score = 0;
+    speedMultiplier = 1;
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+    ball.dx = 3;
+    ball.dy = -3;
+    ball.color = '#00ffcc';
+    paddle.color = '#ffffff';
+    paddle.x = canvas.width / 2 - paddle.width / 2;
+    document.body.style.backgroundColor = '#0d0d0d';
+    gameOverScreen.style.display = 'none';
+    ui.style.display = 'block';
+    bgMusic.play().catch(() => {});
+    gameRunning = true;
+    update();
+  });
+
+  startBtn.addEventListener('click', () => {
+    bgMusic.volume = 0.3;
+    bgMusic.play().catch(() => {});
+    startScreen.style.display = 'none';
+    ui.style.display = 'block';
+    gameRunning = true;
+    update();
+  });
+
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+    ctx.fillStyle = ball.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+    ctx.fillStyle = paddle.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function update() {
+    if (!gameRunning) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall();
+    drawPaddle();
+
+    ball.x += ball.dx * speedMultiplier;
+    ball.y += ball.dy * speedMultiplier;
+
+    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+      ball.dx *= -1;
+      bounceSound.currentTime = 0;
+      bounceSound.play();
+    }
+
+    if (ball.y - ball.radius < 0) {
+      ball.dy *= -1;
+      bounceSound.currentTime = 0;
+      bounceSound.play();
+    }
+
+    if (
+      ball.y + ball.radius >= paddle.y &&
+      ball.y - ball.radius <= paddle.y + paddle.height &&
+      ball.x > paddle.x &&
+      ball.x < paddle.x + paddle.width &&
+      !recentPaddleHit
+    ) {
+      ball.dy *= -1;
+      bounceSound.currentTime = 0;
+      bounceSound.play();
+      score++;
+      recentPaddleHit = true;
+      setTimeout(() => { recentPaddleHit = false; }, 150);
+      scoreDisplay.textContent = score;
+
+      if (speedMultiplier < 3) speedMultiplier += 0.05;
+
+      if (score % 10 === 0) {
+        ball.color = getRandomColor();
+        paddle.color = getRandomColor();
+        document.body.style.backgroundColor = getRandomColor();
+      }
+    }
+
+    if (ball.y + ball.radius > canvas.height) {
+      finalScoreDisplay.textContent = score;
+      gameOverScreen.style.display = 'block';
+      bgMusic.pause();
+      gameRunning = false;
+      return;
+    }
+
+    if (leftPressed && paddle.x > 0) paddle.x -= paddle.dx;
+    if (rightPressed && paddle.x + paddle.width < canvas.width) paddle.x += paddle.dx;
+
+    requestAnimationFrame(update);
+  }
+
+  function getRandomColor() {
+    const colors = ['#00ffcc', '#ff00cc', '#00ccff', '#ffcc00', '#ff6666', '#66ff66'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    paddle.y = canvas.height - 40;
+  });
+</script>
+<!--
+Background Music: Pixabay | Track: "Abyssal Darkness"
+Bounce Sound: Pixabay | Track: "Retro Game Jump"
+-->
+</body>
+</html>
