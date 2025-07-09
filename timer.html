@@ -6,33 +6,47 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
       color: white;
     }
 
-    #pomodoro {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
+    #pomodoro, #pomodoroFull {
       background: rgba(0, 0, 0, 0.8);
       border-radius: 12px;
       padding: 14px 16px;
-      width: 190px;
       font-size: 0.85rem;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
       text-align: center;
     }
 
-    #pomodoro h4 {
+    #pomodoro {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 190px;
+      z-index: 10;
+    }
+
+    #pomodoroFull {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      display: none;
+      z-index: 100;
+    }
+
+    h4 {
       margin: 0 0 6px;
       font-size: 1rem;
     }
 
-    #timer {
-      font-size: 1.6rem;
+    #timer, #timerFull {
+      font-size: 2rem;
       margin: 6px 0;
     }
 
@@ -74,24 +88,44 @@
       background-color: #777;
       cursor: default;
     }
+
+    .fullscreen-toggle {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      color: white;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
+<!-- Mini Pomodoro (bottom-right) -->
 <div id="pomodoro">
+  <button class="fullscreen-toggle" onclick="toggleFullscreen()">⤢</button>
   <h4>🍅 Pomodoro</h4>
-  <div>
-    <label>Focus:</label>
-    <input type="number" id="focusInput" value="25" min="1" /> min
-  </div>
-  <div>
-    <label>Break:</label>
-    <input type="number" id="breakInput" value="5" min="1" /> min
-  </div>
+  <label>Focus:</label><input type="number" id="focusInput" value="25" min="1"> min<br>
+  <label>Break:</label><input type="number" id="breakInput" value="5" min="1"> min
   <div id="timer">25:00</div>
   <div class="pomodoro-buttons">
     <button onclick="startTimer()" id="startBtn">Start</button>
     <button onclick="resetTimer()">Reset</button>
+  </div>
+</div>
+
+<!-- Fullscreen Pomodoro -->
+<div id="pomodoroFull">
+  <button class="fullscreen-toggle" onclick="toggleFullscreen()">✕</button>
+  <h4>🍅 Pomodoro (Full View)</h4>
+  <label>Focus:</label><input type="number" id="focusInputFull" value="25" min="1"> min<br>
+  <label>Break:</label><input type="number" id="breakInputFull" value="5" min="1"> min
+  <div id="timerFull">25:00</div>
+  <div class="pomodoro-buttons">
+    <button onclick="startTimer(true)" id="startBtnFull">Start</button>
+    <button onclick="resetTimer(true)">Reset</button>
   </div>
 </div>
 
@@ -111,22 +145,23 @@
 
   function updateDisplay() {
     document.getElementById("timer").textContent = formatTime(timeLeft);
+    document.getElementById("timerFull").textContent = formatTime(timeLeft);
   }
 
-  function startTimer() {
+  function getInput(isFull) {
+    const focus = parseInt(document.getElementById(isFull ? "focusInputFull" : "focusInput").value);
+    const brk = parseInt(document.getElementById(isFull ? "breakInputFull" : "breakInput").value);
+    return { focus, brk };
+  }
+
+  function startTimer(isFull = false) {
     if (isRunning) return;
-
-    const focusMinutes = parseInt(document.getElementById("focusInput").value);
-    const breakMinutes = parseInt(document.getElementById("breakInput").value);
-
-    sessionDuration = focusMinutes * 60;
-    breakDuration = breakMinutes * 60;
-
-    if (!isBreak) timeLeft = sessionDuration;
-    else timeLeft = breakDuration;
-
+    const { focus, brk } = getInput(isFull);
+    sessionDuration = focus * 60;
+    breakDuration = brk * 60;
+    timeLeft = isBreak ? breakDuration : sessionDuration;
     isRunning = true;
-    document.getElementById("startBtn").disabled = true;
+    (isFull ? document.getElementById("startBtnFull") : document.getElementById("startBtn")).disabled = true;
 
     timer = setInterval(() => {
       if (timeLeft > 0) {
@@ -134,28 +169,42 @@
         updateDisplay();
       } else {
         clearInterval(timer);
-        isRunning = false;
         isBreak = !isBreak;
         timeLeft = isBreak ? breakDuration : sessionDuration;
         updateDisplay();
-        alert(isBreak ? "☕ Break Time! Relax." : "⏳ Focus Time! Let's go.");
-        document.getElementById("startBtn").disabled = false;
+        alert(isBreak ? "☕ Break Time!" : "⏳ Focus Time!");
+        isRunning = false;
+        (isFull ? document.getElementById("startBtnFull") : document.getElementById("startBtn")).disabled = false;
       }
     }, 1000);
   }
 
-  function resetTimer() {
+  function resetTimer(isFull = false) {
     clearInterval(timer);
-    const focusMinutes = parseInt(document.getElementById("focusInput").value);
-    const breakMinutes = parseInt(document.getElementById("breakInput").value);
-
-    sessionDuration = focusMinutes * 60;
-    breakDuration = breakMinutes * 60;
-
+    const { focus, brk } = getInput(isFull);
+    sessionDuration = focus * 60;
+    breakDuration = brk * 60;
     timeLeft = isBreak ? breakDuration : sessionDuration;
     isRunning = false;
     updateDisplay();
     document.getElementById("startBtn").disabled = false;
+    document.getElementById("startBtnFull").disabled = false;
+  }
+
+  function toggleFullscreen() {
+    const mini = document.getElementById("pomodoro");
+    const full = document.getElementById("pomodoroFull");
+    const miniInputs = getInput(false);
+    document.getElementById("focusInputFull").value = miniInputs.focus;
+    document.getElementById("breakInputFull").value = miniInputs.brk;
+
+    if (full.style.display === "none" || full.style.display === "") {
+      full.style.display = "block";
+      mini.style.display = "none";
+    } else {
+      full.style.display = "none";
+      mini.style.display = "block";
+    }
   }
 
   updateDisplay();
