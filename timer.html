@@ -3,140 +3,138 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pomodoro Timer</title>
+<title>Pomodoro Timer - Anime Minimal</title>
 <style>
-  /* Fullscreen and reset */
-  * {
-    box-sizing: border-box;
-  }
+  /* Reset and base styles */
   html, body {
-    margin: 0; padding: 0;
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e);
-    background-size: 800% 800%;
-    animation: gradientBG 20s ease infinite;
-    color: #222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-
-  @keyframes gradientBG {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+  body {
+    /* Anime minimal background: soft gradient + subtle overlay */
+    background: linear-gradient(120deg, #f9e6f7 0%, #c6e2ff 100%);
+    position: relative;
+    height: 100vh;
+    width: 100vw;
   }
-
-  .container {
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 20px;
-    padding: 40px 50px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    max-width: 400px;
-    width: 90vw;
+  /* Anime overlay illustration (SVG) */
+  .anime-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+    background: url('https://svgshare.com/i/15wB.svg') no-repeat center bottom;
+    background-size: cover;
+    /* Replace above URL with your own minimal anime SVG if desired */
+  }
+  /* Timer container in bottom right */
+  .timer-container {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    z-index: 2;
+    background: rgba(255,255,255,0.92);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 18px 22px 16px 22px;
+    min-width: 180px;
+    width: 200px;
     text-align: center;
+    transition: box-shadow 0.2s;
   }
-
-  h1 {
-    margin-bottom: 30px;
-    font-weight: 700;
-    font-size: 2.4rem;
-    color: #333;
+  .timer-container:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
   }
-
-  label {
-    display: block;
-    margin: 15px 0 8px;
+  .timer-title {
+    font-size: 1.1rem;
     font-weight: 600;
-    font-size: 1.1rem;
-    color: #555;
+    color: #7f5fc6;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
   }
-
-  input[type="number"] {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 1.1rem;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    transition: border-color 0.3s ease;
+  .timer-display {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #ff6f91;
+    margin: 8px 0 10px 0;
+    letter-spacing: 2px;
   }
-
-  input[type="number"]:focus {
-    border-color: #ff6f91;
+  .status {
+    font-size: 0.92rem;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .inputs {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .inputs input {
+    width: 40px;
+    padding: 4px 6px;
+    font-size: 1rem;
+    border: 1.5px solid #e0c7f7;
+    border-radius: 6px;
+    text-align: center;
+    background: #f8f6ff;
+    color: #7f5fc6;
     outline: none;
   }
-
-  .timer-display {
-    margin: 40px 0 30px;
-    font-size: 4rem;
-    font-weight: 700;
-    letter-spacing: 4px;
-    color: #ff6f91;
+  .inputs input:focus {
+    border-color: #bca6f7;
   }
-
-  .status {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #666;
-    margin-bottom: 30px;
-  }
-
-  button {
-    background-color: #ff6f91;
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 0 10px;
-  }
-
-  button:hover {
-    background-color: #ff4c6d;
-  }
-
   .controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 7px;
   }
-
-  @media (max-width: 450px) {
-    .timer-display {
-      font-size: 3rem;
-      letter-spacing: 2px;
-    }
-    .container {
-      padding: 30px 25px;
+  .controls button {
+    background: #ffb6c1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 4px 14px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .controls button:hover {
+    background: #ff6f91;
+  }
+  @media (max-width: 600px) {
+    .timer-container {
+      right: 10px;
+      bottom: 10px;
+      width: 90vw;
+      min-width: 0;
+      padding: 12px 8px 10px 8px;
     }
   }
 </style>
 </head>
 <body>
-
-<div class="container" role="main" aria-label="Pomodoro Timer">
-  <h1>Pomodoro Timer</h1>
-
-  <label for="sessionInput">Session Time (minutes)</label>
-  <input type="number" id="sessionInput" min="1" max="120" value="25" aria-describedby="sessionDesc" />
-
-  <label for="breakInput">Break Time (minutes)</label>
-  <input type="number" id="breakInput" min="1" max="60" value="5" aria-describedby="breakDesc" />
-
-  <div class="status" id="statusText" aria-live="polite">Ready to start</div>
-  <div class="timer-display" id="timerDisplay" aria-live="polite">25:00</div>
-
+<div class="anime-bg"></div>
+<div class="timer-container" role="main" aria-label="Pomodoro Timer">
+  <div class="timer-title">Pomodoro</div>
+  <div class="status" id="statusText">Ready</div>
+  <div class="timer-display" id="timerDisplay">25:00</div>
+  <div class="inputs">
+    <input type="number" id="sessionInput" min="1" max="120" value="25" title="Session (min)" aria-label="Session minutes" />
+    <input type="number" id="breakInput" min="1" max="60" value="5" title="Break (min)" aria-label="Break minutes" />
+  </div>
   <div class="controls">
-    <button id="startBtn" aria-label="Start timer">Start</button>
-    <button id="pauseBtn" aria-label="Pause timer" disabled>Pause</button>
-    <button id="resetBtn" aria-label="Reset timer" disabled>Reset</button>
+    <button id="startBtn" aria-label="Start">Start</button>
+    <button id="pauseBtn" aria-label="Pause" disabled>Pause</button>
+    <button id="resetBtn" aria-label="Reset" disabled>Reset</button>
   </div>
 </div>
-
 <script>
   const sessionInput = document.getElementById('sessionInput');
   const breakInput = document.getElementById('breakInput');
@@ -146,8 +144,8 @@
   const pauseBtn = document.getElementById('pauseBtn');
   const resetBtn = document.getElementById('resetBtn');
 
-  let sessionTime = 25 * 60; // seconds
-  let breakTime = 5 * 60; // seconds
+  let sessionTime = 25 * 60;
+  let breakTime = 5 * 60;
   let timeLeft = sessionTime;
   let timer = null;
   let isSession = true;
@@ -161,14 +159,14 @@
 
   function updateDisplay() {
     timerDisplay.textContent = formatTime(timeLeft);
-    statusText.textContent = isSession ? 'Work Session' : 'Break Time';
+    statusText.textContent = isSession ? 'Work' : 'Break';
   }
 
   function switchMode() {
     isSession = !isSession;
     timeLeft = isSession ? sessionTime : breakTime;
     updateDisplay();
-    // Optional: play a sound or notify user here
+    // Optionally: add sound or notification here
   }
 
   function tick() {
@@ -208,10 +206,9 @@
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     resetBtn.disabled = true;
-    statusText.textContent = 'Ready to start';
+    statusText.textContent = 'Ready';
   }
 
-  // Update times when inputs change (only if timer is not running)
   sessionInput.addEventListener('change', () => {
     if (!isRunning) {
       sessionTime = parseInt(sessionInput.value, 10) * 60 || 1500;
@@ -236,10 +233,7 @@
   pauseBtn.addEventListener('click', pauseTimer);
   resetBtn.addEventListener('click', resetTimer);
 
-  // Initialize display
   resetTimer();
 </script>
-
 </body>
 </html>
-
