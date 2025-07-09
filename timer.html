@@ -28,7 +28,7 @@
     pointer-events: none;
     z-index: 0;
     opacity: 0.35;
-    background: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-ai-image%2Fnature-anime-illustration-landscape-background-with-particles-light_245506271.htm&psig=AOvVaw0Vsc5_SV2n_vGTbb2nCu-n&ust=1752134578724000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLCNqqmor44DFQAAAAAdAAAAABAE') no-repeat center bottom;
+    background: url('file:///C:/Users/Mitesh/Downloads/9263420_4091143.svg') no-repeat center bottom;
     background-size: cover;
   }
   /* Timer container in bottom right */
@@ -41,8 +41,8 @@
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     padding: 18px 22px 16px 22px;
-    min-width: 180px;
-    width: 200px;
+    min-width: 220px;
+    width: 220px;
     text-align: center;
     transition: box-shadow 0.2s;
   }
@@ -68,6 +68,12 @@
     font-weight: 600;
     color: #7f5fc6;
     margin-bottom: 10px;
+  }
+  .times-info {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 12px;
+    line-height: 1.3;
   }
   .inputs {
     display: flex;
@@ -125,6 +131,9 @@
   <div class="timer-title">Pomodoro</div>
   <div class="status" id="statusText">Ready</div>
   <div class="timer-display" id="timerDisplay">25:00</div>
+  <div class="times-info" id="timesInfo">
+    Session: 25 min | Break: 5 min
+  </div>
   <div class="inputs">
     <input type="number" id="sessionInput" min="1" max="120" value="25" title="Session (min)" aria-label="Session minutes" />
     <input type="number" id="breakInput" min="1" max="60" value="5" title="Break (min)" aria-label="Break minutes" />
@@ -140,6 +149,7 @@
   const breakInput = document.getElementById('breakInput');
   const statusText = document.getElementById('statusText');
   const timerDisplay = document.getElementById('timerDisplay');
+  const timesInfo = document.getElementById('timesInfo');
   const startBtn = document.getElementById('startBtn');
   const pauseBtn = document.getElementById('pauseBtn');
   const resetBtn = document.getElementById('resetBtn');
@@ -155,6 +165,10 @@
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
+  }
+
+  function updateTimesInfo() {
+    timesInfo.textContent = `Session: ${Math.floor(sessionTime / 60)} min | Break: ${Math.floor(breakTime / 60)} min`;
   }
 
   function updateDisplay() {
@@ -202,6 +216,7 @@
     isSession = true;
     timeLeft = sessionTime;
     updateDisplay();
+    updateTimesInfo();
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     resetBtn.disabled = true;
@@ -215,6 +230,7 @@
         timeLeft = sessionTime;
         updateDisplay();
       }
+      updateTimesInfo();
     }
   });
 
@@ -225,6 +241,7 @@
         timeLeft = breakTime;
         updateDisplay();
       }
+      updateTimesInfo();
     }
   });
 
