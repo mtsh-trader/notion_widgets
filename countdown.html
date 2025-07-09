@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interactive Countdown Timer</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: #334e68;
+  }
+  .container {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  .inputs input {
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: 2px solid #627d98;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 160px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  .inputs input:focus {
+    border-color: #1d3557;
+    outline: none;
+  }
+  button {
+    background-color: #1d3557;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #457b9d;
+  }
+  .countdown-timer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1d3557;
+  }
+  .time-segment {
+    flex: 1;
+    margin: 0 8px;
+  }
+  .time-label {
+    font-size: 0.9rem;
+    color: #627d98;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  @media (max-width: 400px) {
+    .countdown-timer {
+      font-size: 1.6rem;
+    }
+    .inputs input {
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Set Your Countdown</h1>
+  <div class="inputs">
+    <input type="date" id="dateInput" />
+    <input type="time" id="timeInput" step="1" />
+  </div>
+  <button id="startBtn">Start Countdown</button>
+
+  <div class="countdown-timer" style="margin-top: 30px;">
+    <div class="time-segment">
+      <div id="days">00</div>
+      <div class="time-label">Days</div>
+    </div>
+    <div class="time-segment">
+      <div id="hours">00</div>
+      <div class="time-label">Hours</div>
+    </div>
+    <div class="time-segment">
+      <div id="minutes">00</div>
+      <div class="time-label">Minutes</div>
+    </div>
+    <div class="time-segment">
+      <div id="seconds">00</div>
+      <div class="time-label">Seconds</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let timerInterval;
+
+  function updateCountdown(targetDate) {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById('days').textContent = '00';
+      document.getElementById('hours').textContent = '00';
+      document.getElementById('minutes').textContent = '00';
+      document.getElementById('seconds').textContent = '00';
+      alert("Countdown finished!");
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById('days').textContent = days.toString().padStart(2, '0');
+    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => {
+    const dateValue = document.getElementById('dateInput').value;
+    const timeValue = document.getElementById('timeInput').value;
+
+    if (!dateValue || !timeValue) {
+      alert('Please enter both date and time.');
+      return;
+    }
+
+    const targetDateTime = new Date(`${dateValue}T${timeValue}`);
+
+    if (isNaN(targetDateTime.getTime())) {
+      alert('Invalid date or time.');
+      return;
+    }
+
+    if (targetDateTime <= new Date()) {
+      alert('Please select a future date and time.');
+      return;
+    }
+
+    clearInterval(timerInterval);
+    updateCountdown(targetDateTime);
+    timerInterval = setInterval(() => updateCountdown(targetDateTime), 1000);
+  });
+</script>
+
+</body>
+</html>
