@@ -28,9 +28,8 @@
     pointer-events: none;
     z-index: 0;
     opacity: 0.35;
-    background: url('https://svgshare.com/i/15wB.svg') no-repeat center bottom;
+    background: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-ai-image%2Fnature-anime-illustration-landscape-background-with-particles-light_245506271.htm&psig=AOvVaw0Vsc5_SV2n_vGTbb2nCu-n&ust=1752134578724000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLCNqqmor44DFQAAAAAdAAAAABAE') no-repeat center bottom;
     background-size: cover;
-    /* Replace above URL with your own minimal anime SVG if desired */
   }
   /* Timer container in bottom right */
   .timer-container {
@@ -61,12 +60,13 @@
     font-size: 2.2rem;
     font-weight: 700;
     color: #ff6f91;
-    margin: 8px 0 10px 0;
+    margin: 8px 0 6px 0;
     letter-spacing: 2px;
   }
   .status {
-    font-size: 0.92rem;
-    color: #888;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #7f5fc6;
     margin-bottom: 10px;
   }
   .inputs {
@@ -159,14 +159,13 @@
 
   function updateDisplay() {
     timerDisplay.textContent = formatTime(timeLeft);
-    statusText.textContent = isSession ? 'Work' : 'Break';
+    statusText.textContent = isSession ? 'Session (Work)' : 'Break';
   }
 
   function switchMode() {
     isSession = !isSession;
     timeLeft = isSession ? sessionTime : breakTime;
     updateDisplay();
-    // Optionally: add sound or notification here
   }
 
   function tick() {
