@@ -1,255 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pomodoro Timer - Anime Minimal</title>
-<style>
-  /* Reset and base styles */
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  body {
-    /* Anime minimal background: soft gradient + subtle overlay */
-    background: linear-gradient(120deg, #f9e6f7 0%, #c6e2ff 100%);
-    position: relative;
-    height: 100vh;
-    width: 100vw;
-  }
-  /* Anime overlay illustration (SVG) */
-  .anime-bg {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.35;
-    background: url('file:///C:/Users/Mitesh/Downloads/9263420_4091143.svg') no-repeat center bottom;
-    background-size: cover;
-  }
-  /* Timer container in bottom right */
-  .timer-container {
-    position: fixed;
-    right: 30px;
-    bottom: 30px;
-    z-index: 2;
-    background: rgba(255,255,255,0.92);
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    padding: 18px 22px 16px 22px;
-    min-width: 220px;
-    width: 220px;
-    text-align: center;
-    transition: box-shadow 0.2s;
-  }
-  .timer-container:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-  }
-  .timer-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #7f5fc6;
-    margin-bottom: 6px;
-    letter-spacing: 1px;
-  }
-  .timer-display {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #ff6f91;
-    margin: 8px 0 6px 0;
-    letter-spacing: 2px;
-  }
-  .status {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #7f5fc6;
-    margin-bottom: 10px;
-  }
-  .times-info {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
-  .inputs {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    margin-bottom: 8px;
-  }
-  .inputs input {
-    width: 40px;
-    padding: 4px 6px;
-    font-size: 1rem;
-    border: 1.5px solid #e0c7f7;
-    border-radius: 6px;
-    text-align: center;
-    background: #f8f6ff;
-    color: #7f5fc6;
-    outline: none;
-  }
-  .inputs input:focus {
-    border-color: #bca6f7;
-  }
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 7px;
-  }
-  .controls button {
-    background: #ffb6c1;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 4px 14px;
-    font-size: 0.98rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .controls button:hover {
-    background: #ff6f91;
-  }
-  @media (max-width: 600px) {
-    .timer-container {
-      right: 10px;
-      bottom: 10px;
-      width: 90vw;
-      min-width: 0;
-      padding: 12px 8px 10px 8px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pomodoro Timer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1611749861815-e7ea1a73da40?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
     }
-  }
-</style>
+
+    #pomodoro {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 18px;
+      width: 160px;
+      font-size: 0.9rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #pomodoro h4 {
+      margin: 0 0 8px 0;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    #timer {
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .pomodoro-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+    }
+
+    button {
+      flex: 1;
+      padding: 6px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button:disabled {
+      background-color: #888;
+    }
+  </style>
 </head>
 <body>
-<div class="anime-bg"></div>
-<div class="timer-container" role="main" aria-label="Pomodoro Timer">
-  <div class="timer-title">Pomodoro</div>
-  <div class="status" id="statusText">Ready</div>
-  <div class="timer-display" id="timerDisplay">25:00</div>
-  <div class="times-info" id="timesInfo">
-    Session: 25 min | Break: 5 min
-  </div>
-  <div class="inputs">
-    <input type="number" id="sessionInput" min="1" max="120" value="25" title="Session (min)" aria-label="Session minutes" />
-    <input type="number" id="breakInput" min="1" max="60" value="5" title="Break (min)" aria-label="Break minutes" />
-  </div>
-  <div class="controls">
-    <button id="startBtn" aria-label="Start">Start</button>
-    <button id="pauseBtn" aria-label="Pause" disabled>Pause</button>
-    <button id="resetBtn" aria-label="Reset" disabled>Reset</button>
+
+<div id="pomodoro">
+  <h4>🍅 Pomodoro</h4>
+  <div id="timer">25:00</div>
+  <div class="pomodoro-buttons">
+    <button onclick="startTimer()" id="startBtn">Start</button>
+    <button onclick="resetTimer()">Reset</button>
   </div>
 </div>
-<script>
-  const sessionInput = document.getElementById('sessionInput');
-  const breakInput = document.getElementById('breakInput');
-  const statusText = document.getElementById('statusText');
-  const timerDisplay = document.getElementById('timerDisplay');
-  const timesInfo = document.getElementById('timesInfo');
-  const startBtn = document.getElementById('startBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const resetBtn = document.getElementById('resetBtn');
 
-  let sessionTime = 25 * 60;
-  let breakTime = 5 * 60;
-  let timeLeft = sessionTime;
-  let timer = null;
-  let isSession = true;
+<script>
+  let timer;
+  let timeLeft = 25 * 60;
   let isRunning = false;
 
   function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  function updateTimesInfo() {
-    timesInfo.textContent = `Session: ${Math.floor(sessionTime / 60)} min | Break: ${Math.floor(breakTime / 60)} min`;
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
   }
 
   function updateDisplay() {
-    timerDisplay.textContent = formatTime(timeLeft);
-    statusText.textContent = isSession ? 'Session (Work)' : 'Break';
-  }
-
-  function switchMode() {
-    isSession = !isSession;
-    timeLeft = isSession ? sessionTime : breakTime;
-    updateDisplay();
-  }
-
-  function tick() {
-    if (timeLeft > 0) {
-      timeLeft--;
-      updateDisplay();
-    } else {
-      switchMode();
-    }
+    document.getElementById("timer").textContent = formatTime(timeLeft);
   }
 
   function startTimer() {
     if (isRunning) return;
     isRunning = true;
-    startBtn.disabled = true;
-    pauseBtn.disabled = false;
-    resetBtn.disabled = false;
-    timer = setInterval(tick, 1000);
-  }
+    document.getElementById("startBtn").disabled = true;
 
-  function pauseTimer() {
-    if (!isRunning) return;
-    isRunning = false;
-    clearInterval(timer);
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
+    timer = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateDisplay();
+      } else {
+        clearInterval(timer);
+        alert("⏳ Pomodoro complete! Take a short break.");
+        isRunning = false;
+        document.getElementById("startBtn").disabled = false;
+      }
+    }, 1000);
   }
 
   function resetTimer() {
-    isRunning = false;
     clearInterval(timer);
-    sessionTime = parseInt(sessionInput.value, 10) * 60 || 1500;
-    breakTime = parseInt(breakInput.value, 10) * 60 || 300;
-    isSession = true;
-    timeLeft = sessionTime;
+    timeLeft = 25 * 60;
+    isRunning = false;
     updateDisplay();
-    updateTimesInfo();
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resetBtn.disabled = true;
-    statusText.textContent = 'Ready';
+    document.getElementById("startBtn").disabled = false;
   }
 
-  sessionInput.addEventListener('change', () => {
-    if (!isRunning) {
-      sessionTime = parseInt(sessionInput.value, 10) * 60 || 1500;
-      if (isSession) {
-        timeLeft = sessionTime;
-        updateDisplay();
-      }
-      updateTimesInfo();
-    }
-  });
-
-  breakInput.addEventListener('change', () => {
-    if (!isRunning) {
-      breakTime = parseInt(breakInput.value, 10) * 60 || 300;
-      if (!isSession) {
-        timeLeft = breakTime;
-        updateDisplay();
-      }
-      updateTimesInfo();
-    }
-  });
-
-  startBtn.addEventListener('click', startTimer);
-  pauseBtn.addEventListener('click', pauseTimer);
-  resetBtn.addEventListener('click', resetTimer);
-
-  resetTimer();
+  updateDisplay();
 </script>
+
 </body>
 </html>
