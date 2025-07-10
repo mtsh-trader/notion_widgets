@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CFA Fortune Teller</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1c1c1c, #2e2e2e);
+      font-family: 'Chewy', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      width: 300px;
+      height: 300px;
+      background: #fff3e0;
+      border: 6px dotted #ff4081;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      border-radius: 25px;
+      position: relative;
+      background-image: url('https://i.pinimg.com/originals/f1/96/5a/f1965a8084c7cb7e92a0320896a39660.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      color: #4e342e;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px #fff;
+    }
+
+    .fortune {
+      font-size: 14px;
+      color: #d81b60;
+      padding: 0 10px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+    }
+
+    .button {
+      position: absolute;
+      bottom: 15px;
+      background-color: #d81b60;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #ad1457;
+    }
+
+    .disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card" id="fortuneCard">
+    <h2>🎰 CFA Fortune Teller 🎲</h2>
+    <p class="fortune" id="fortuneText">Click to reveal your fortune</p>
+    <button class="button" id="getFortune">Reveal</button>
+  </div>
+
+  <script>
+    const fortunes = [
+      "You will master Quant with ease!",
+      "Ethics will be your strongest topic.",
+      "Today is a great day to solve mocks!",
+      "Flashcards will reveal golden answers.",
+      "Trust your instincts — and formulas!",
+      "A cup of coffee is your secret weapon.",
+      "You will revise the most forgotten topic today.",
+      "You're closer to passing than you think.",
+      "A surprise concept will stick today!",
+      "Mock 3 will be your best performance."
+    ];
+
+    const storageKey = 'cfa_fortune_last_time';
+    const maxViewsPerDay = 2;
+
+    function canShowFortune() {
+      const data = JSON.parse(localStorage.getItem(storageKey)) || { date: '', count: 0 };
+      const today = new Date().toISOString().split('T')[0];
+      return data.date !== today || data.count < maxViewsPerDay;
+    }
+
+    function updateFortuneUsage() {
+      const data = JSON.parse(localStorage.getItem(storageKey)) || { date: '', count: 0 };
+      const today = new Date().toISOString().split('T')[0];
+      if (data.date === today) {
+        data.count++;
+      } else {
+        data.date = today;
+        data.count = 1;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    document.getElementById('getFortune').addEventListener('click', () => {
+      if (canShowFortune()) {
+        const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+        document.getElementById('fortuneText').textContent = fortune;
+        updateFortuneUsage();
+      } else {
+        document.getElementById('fortuneText').textContent = '🔒 Come back tomorrow for a new fortune!';
+        document.getElementById('getFortune').classList.add('disabled');
+        document.getElementById('getFortune').disabled = true;
+      }
+    });
+  </script>
+</body>
+
+</html>
