@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CFA Fortune Teller</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1c1c1c, #2e2e2e);
+      font-family: 'Chewy', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      width: 300px;
+      height: 300px;
+      background: #fff3e0;
+      border: 6px dotted #ff4081;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      border-radius: 25px;
+      position: relative;
+      background-image: url('https://i.pinimg.com/originals/f1/96/5a/f1965a8084c7cb7e92a0320896a39660.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      color: #4e342e;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px #fff;
+    }
+
+    .fortune {
+      font-size: 14px;
+      color: #d81b60;
+      padding: 0 10px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+    }
+
+    .button {
+      position: absolute;
+      bottom: 15px;
+      background-color: #d81b60;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #ad1457;
+    }
+
+    .disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card" id="fortuneCard">
+    <h2>🎰 Fortune Teller 🎲</h2>
+    <p class="fortune" id="fortuneText">Click to reveal your fortune</p>
+    <button class="button" id="getFortune">Reveal</button>
+  </div>
+
+  <script>
+    const fortunes = [
+      "Building a car is not just mechanics, it’s passion forged in metal.",
+"Every bolt you tighten is a step closer to the podium.",
+"A fast car is built in the garage, not on the track.",
+"Great racers drive what great engineers dream.",
+"Blueprints are dreams waiting to be driven.",
+"Behind every winning lap is a sleepless night in the workshop.",
+"Engineering isn’t just a degree—it’s the soul of speed.",
+"We don’t just build cars—we sculpt performance.",
+"In racing, precision is the only shortcut.",
+"If you want to win races, first build something worth driving.",
+"Speed doesn’t come from the throttle, it comes from the team behind it.",
+"In racing, milliseconds are earned in the garage.",
+"The track rewards those who respect the grind.",
+"You don’t win because you drove fast. You win because you built faster.",
+"Racing is where engineering meets adrenaline.",
+"The driver is the tip of the spear, but the team is the forge.",
+"Victory is welded together, one frame at a time.",
+"Race day is a celebration of countless failures and one perfect build.",
+"We don’t race to beat others, we race to beat yesterday’s build.",
+"SAE isn’t just a competition—it’s the birth of future innovators."
+    ];
+
+    const storageKey = 'cfa_fortune_last_time';
+    const maxViewsPerDay = 2;
+
+    function canShowFortune() {
+      const data = JSON.parse(localStorage.getItem(storageKey)) || { date: '', count: 0 };
+      const today = new Date().toISOString().split('T')[0];
+      return data.date !== today || data.count < maxViewsPerDay;
+    }
+
+    function updateFortuneUsage() {
+      const data = JSON.parse(localStorage.getItem(storageKey)) || { date: '', count: 0 };
+      const today = new Date().toISOString().split('T')[0];
+      if (data.date === today) {
+        data.count++;
+      } else {
+        data.date = today;
+        data.count = 1;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    document.getElementById('getFortune').addEventListener('click', () => {
+      if (canShowFortune()) {
+        const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+        document.getElementById('fortuneText').textContent = fortune;
+        updateFortuneUsage();
+      } else {
+        document.getElementById('fortuneText').textContent = '🔒 Come back tomorrow for a new fortune!';
+        document.getElementById('getFortune').classList.add('disabled');
+        document.getElementById('getFortune').disabled = true;
+      }
+    });
+  </script>
+</body>
+
+</html>
