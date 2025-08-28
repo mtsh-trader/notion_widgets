@@ -1,1 +1,229 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Simran!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .header {
+            border: 3px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .title {
+            color: #ffd700;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: #00ff00;
+            white-space: pre;
+            margin: 30px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            line-height: 1.2;
+        }
+
+        .message {
+            font-size: 1.4em;
+            color: #ff69b4;
+            font-weight: bold;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            min-height: 50px;
+        }
+
+        .cake-row {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #ff6b6b;
+        }
+
+        .celebration {
+            font-size: 1.8em;
+            color: #ffd700;
+            font-weight: bold;
+            background: #ff69b4;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .footer {
+            border: 3px solid #00ffff;
+            padding: 20px;
+            margin: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            color: #00ffff;
+            font-size: 1.2em;
+        }
+
+        .close-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        .typing {
+            border-right: 2px solid #ff69b4;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #ff69b4; }
+        }
+
+        .hidden {
+            opacity: 0;
+        }
+
+        .show {
+            opacity: 1;
+            transition: opacity 1s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header fade-in">
+            <h1 class="title">🎉 A Special Delivery Just for You! 🎉</h1>
+        </div>
+
+        <div class="ascii-art hidden" id="asciiArt">    __  __                           ____  _      __  __        __           
+   / / / /___ _____  ____  __  __   / __ )(_)____/ /_/ /_  ____/ /___ ___  __
+  / /_/ / __ `/ __ \/ __ \/ / / /  / __  / / ___/ __/ __ \/ __  / __ `/ / / /
+ / __  / /_/ / /_/ / /_/ / /_/ /  / /_/ / / /  / /_/ / / / /_/ / /_/ / /_/ / 
+/_/ /_/\__,_/ .___/ .___/\__, /  /_____/_/_/   \__/_/ /_/\__,_/\__,_/\__, ( )
+           /_/   /_/    /____/                                      /____/|/ 
+   _____ _                            __
+  / ___/(_)___ ___  _________ _____  / /
+  \__ \/ / __ `__ \/ ___/ __ `/ __ \/ / 
+ ___/ / / / / / / / /  / /_/ / / / /_/  
+/____/_/_/ /_/ /_/_/   \__,_/_/ /_(_)   
+                                        
+<span style="color: #00ffff;">Simran</span>!</div>
+
+        <div class="message hidden" id="messageBox">
+            <span id="typedMessage" class="typing"></span>
+        </div>
+
+        <div class="cake-row hidden" id="cakeRow">
+            🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂
+        </div>
+
+        <div class="celebration hidden" id="celebration">
+            🥳 May all your dreams come true! 🥳
+        </div>
+
+        <div class="cake-row hidden" id="cakeRow2">
+            🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂 🎂
+        </div>
+
+        <div class="footer hidden" id="footer">
+            <p>This message was sent with love!</p>
+        </div>
+
+        <button class="close-btn hidden" id="closeBtn" onclick="window.close()">
+            Press to close this window
+        </button>
+    </div>
+
+    <script>
+        const message = "Wishing you a day filled with happiness and a year filled with joy. You made my life brighter and better just by being in it.";
+        let messageIndex = 0;
+        
+        function typeMessage() {
+            const messageElement = document.getElementById('typedMessage');
+            if (messageIndex < message.length) {
+                messageElement.textContent += message[messageIndex];
+                messageIndex++;
+                setTimeout(typeMessage, 50);
+            } else {
+                messageElement.classList.remove('typing');
+                setTimeout(showNextElement, 1000);
+            }
+        }
+
+        function showElement(elementId, delay = 0) {
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                element.classList.remove('hidden');
+                element.classList.add('show');
+            }, delay);
+        }
+
+        function showNextElement() {
+            showElement('cakeRow', 0);
+            showElement('celebration', 500);
+            showElement('cakeRow2', 1000);
+            showElement('footer', 1500);
+            showElement('closeBtn', 2500);
+        }
+
+        // Start the animation sequence
+        setTimeout(() => {
+            showElement('asciiArt');
+        }, 1000);
+
+        setTimeout(() => {
+            document.getElementById('messageBox').classList.remove('hidden');
+            document.getElementById('messageBox').classList.add('show');
+            setTimeout(typeMessage, 500);
+        }, 2000);
+    </script>
+</body>
+</html>
