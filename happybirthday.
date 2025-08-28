@@ -1,0 +1,61 @@
+
+import pyfiglet
+import time
+from termcolor import colored
+import sys
+
+
+def happy_birthday_wishes():
+    """Generates a creative and interactive happy birthday message."""
+
+    # Customize these variables
+    name_to_wish = colored("Simran", 'cyan') or "Friend"
+    custom_message = colored(
+        "Wishing you a day filled with happiness and a year filled with joy. "
+        "You made my life brighter and better just by being in it.",
+        'cyan'
+    )
+
+    print("\n" + "="*50)
+    print(colored("🎉 A Special Delivery Just for You! 🎉", 'yellow', attrs=['bold']))
+    print("="*50 + "\n")
+    time.sleep(1)
+
+    # Display an ASCII art greeting
+    ascii_greeting = pyfiglet.figlet_format(f"Happy Birthday, Simran!", font="slant")
+    print(colored(ascii_greeting, 'green'))
+    time.sleep(1)
+
+    # Creative text effects
+    if custom_message:
+        message = f'"{custom_message}"'
+    else:
+        message = "Wishing you a day filled with happiness and a year filled with joy."
+
+    for char in message:
+        sys.stdout.write(colored(char, 'magenta', attrs=['bold']))
+        sys.stdout.flush()
+        time.sleep(0.05)
+    print("\n")
+    time.sleep(1)
+
+    # A short, celebratory animation
+    print(colored("🎂 ", 'red') * 10)
+    print(colored("🥳  May all your dreams come true!  🥳", 'yellow', attrs=['bold', 'reverse']))
+    print(colored("🎂 ", 'red') * 10)
+
+    time.sleep(1.5)
+
+    # A closing message
+    print("\n" + "="*50)
+    print(colored("This message was sent with love!", 'cyan'))
+    print("="*50)
+    time.sleep(2)
+
+    # Final prompt
+    print(colored("\nPress Enter to close this window...", 'white'))
+    input()
+
+
+
+happy_birthday_wishes()
